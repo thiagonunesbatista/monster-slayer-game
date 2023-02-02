@@ -3,12 +3,13 @@ Vue.createApp({
     return {
       playerHealth: 100,
       monsterHealth: 100,
-      accumulatedPlayerAttacks: 0
+      accumulatedPlayerAttacks: 0,
+      hasPlayerSurrended: false
     }
   },
   computed: {
     finishedBattleMessage() {
-      if (this.playerHealth <= 0) {
+      if (this.hasPlayerSurrended || this.playerHealth <= 0) {
         return 'Monster Won'
       }
 
@@ -65,6 +66,7 @@ Vue.createApp({
       this.playerHealth = 100
       this.monsterHealth = 100
       this.accumulatedPlayerAttacks = 0
+      this.hasPlayerSurrended = false
     },
     getRandomValueBetweenInterval(initialInverval, finalInterval) {
       return (
@@ -107,6 +109,8 @@ Vue.createApp({
         this.playerHealth = healthAfterHeal
       }
     },
-    handleSurrender() {}
+    handleSurrender() {
+      this.hasPlayerSurrended = true
+    }
   }
 }).mount('#game')
