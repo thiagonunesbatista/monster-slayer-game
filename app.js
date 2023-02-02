@@ -4,7 +4,8 @@ Vue.createApp({
       playerHealth: 100,
       monsterHealth: 100,
       accumulatedPlayerAttacks: 0,
-      hasPlayerSurrended: false
+      hasPlayerSurrended: false,
+      logMessages: []
     }
   },
   computed: {
@@ -62,11 +63,20 @@ Vue.createApp({
     }
   },
   methods: {
+    addLogMessage({ who, action, type, points }) {
+      this.logMessages.unshift({
+        who,
+        type,
+        action,
+        points
+      })
+    },
     startNewBattle() {
       this.playerHealth = 100
       this.monsterHealth = 100
       this.accumulatedPlayerAttacks = 0
       this.hasPlayerSurrended = false
+      this.logMessages = []
     },
     getRandomValueBetweenInterval(initialInverval, finalInterval) {
       return (
@@ -75,23 +85,35 @@ Vue.createApp({
       )
     },
     makeMonsterAttack() {
-      this.makeAttack('playerHealth', 8, 15)
+      this.makeAttack('playerHealth', 8, 15, 'monster')
     },
-    makeAttack(enemyHealthKey, minimumAttackDamage, maximumAttackDamage) {
+    makeAttack(
+      enemyHealthKey,
+      minimumAttackDamage,
+      maximumAttackDamage,
+      originAttackName
+    ) {
       const randomAttackDamage = this.getRandomValueBetweenInterval(
         minimumAttackDamage,
         maximumAttackDamage
       )
 
+      this.addLogMessage({
+        who: originAttackName,
+        action: `attacked with damage of`,
+        points: randomAttackDamage,
+        type: 'attack'
+      })
+
       this[enemyHealthKey] -= randomAttackDamage
     },
     makePlayerAttack() {
-      this.makeAttack('monsterHealth', 5, 12)
+      this.makeAttack('monsterHealth', 5, 12, 'player')
       this.accumulatedPlayerAttacks++
     },
     makePlayerSpecialAttack() {
       if (this.isSpecialAttackAvailable) {
-        this.makeAttack('monsterHealth', 15, 25)
+        this.makeAttack('monsterHealth', 15, 25, 'player')
         this.accumulatedPlayerAttacks = 0
       }
     },
@@ -100,6 +122,13 @@ Vue.createApp({
         const healValue = this.getRandomValueBetweenInterval(5, 20)
 
         const healthAfterHeal = this.playerHealth + healValue
+
+        this.addLogMessage({
+          who: 'player',
+          action: `healed himself for`,
+          type: 'heal',
+          points: healValue
+        })
 
         if (healthAfterHeal > 100) {
           this.playerHealth = 100
@@ -111,6 +140,11 @@ Vue.createApp({
     },
     handleSurrender() {
       this.hasPlayerSurrended = true
+      this.addLogMessage({
+        who: 'player',
+        type: 'surrended',
+        action: 'surrended'
+      })
     }
   }
 }).mount('#game')

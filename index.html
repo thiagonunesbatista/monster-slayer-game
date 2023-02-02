@@ -46,9 +46,25 @@
         <button @click="healPlayer" :disabled="!isHealAvailable">HEAL</button>
         <button @click="handleSurrender">SURRENDER</button>
       </section>
-      <section id="log" class="container">
+      <section v-if="logMessages.length" id="log" class="container">
         <h2>Battle Log</h2>
-        <ul></ul>
+        <ul>
+          <li v-for="(log, index) in logMessages" :key="index">
+            <span
+              :class="{ 'log--player': log.who === 'player', 'log--monster': log.who === 'monster' }"
+            >
+              {{ log.who }}
+            </span>
+
+            {{ log.action }}
+
+            <span
+              :class="{ 'log--damage': log.type === 'attack', 'log--heal': log.type === 'heal' }"
+            >
+              {{ log.points }}
+            </span>
+          </li>
+        </ul>
       </section>
     </div>
   </body>
