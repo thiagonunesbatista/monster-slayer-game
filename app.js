@@ -20,8 +20,8 @@ Vue.createApp({
     },
     healthBarStyles() {
       return {
-        monster: `width: ${this.monsterHealth}%`,
-        player: `width: ${this.playerHealth}%`
+        monster: `width: ${this.monsterHealth > 0 ? this.monsterHealth : 0}%`,
+        player: `width: ${this.playerHealth > 0 ? this.playerHealth : 0}%`
       }
     },
     isSpecialAttackAvailable() {
@@ -31,17 +31,28 @@ Vue.createApp({
     },
     isHealAvailable() {
       return this.accumulatedPlayerAttacks >= 2 && this.playerHealth < 100
+    },
+    isANewGame() {
+      return this.playerHealth === 100 && this.monsterHealth === 100
     }
   },
   watch: {
     monsterHealth(newHealthValue, oldHealthValue) {
-      const hasMonsterBeenAttacked = newHealthValue - oldHealthValue
+      if (this.isANewGame) {
+        return
+      }
+
+      const hasMonsterBeenAttacked = newHealthValue < oldHealthValue
 
       if (newHealthValue > 0 && hasMonsterBeenAttacked) {
         this.makeMonsterAttack()
       }
     },
     playerHealth(newHealthValue, oldHealthValue) {
+      if (this.isANewGame) {
+        return
+      }
+
       const hasPlayerBeenHealed = newHealthValue > oldHealthValue
 
       if (hasPlayerBeenHealed) {
@@ -78,7 +89,7 @@ Vue.createApp({
     },
     makePlayerSpecialAttack() {
       if (this.isSpecialAttackAvailable) {
-        this.makeAttack('monsterHealth', 15, 20)
+        this.makeAttack('monsterHealth', 15, 25)
         this.accumulatedPlayerAttacks = 0
       }
     },
