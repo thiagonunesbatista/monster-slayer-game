@@ -2,7 +2,8 @@ Vue.createApp({
   data() {
     return {
       playerHealth: 100,
-      monsterHealth: 100
+      monsterHealth: 100,
+      accumulatedPlayerAttacks: 0
     }
   },
   computed: {
@@ -11,6 +12,11 @@ Vue.createApp({
         monster: `width: ${this.monsterHealth}%`,
         player: `width: ${this.playerHealth}%`
       }
+    },
+    isSpecialAttackAvailable() {
+      const quantityToLoadSpecialAttack = 3
+
+      return this.accumulatedPlayerAttacks >= quantityToLoadSpecialAttack
     }
   },
   watch: {
@@ -32,12 +38,20 @@ Vue.createApp({
           Math.random() * (maximumAttackDamage - minimumAttackDamage)
         ) + minimumAttackDamage
 
+      console.log(randomAttackDamage)
+
       this[enemyHealthKey] -= randomAttackDamage
     },
     makePlayerAttack() {
       this.makeAttack('monsterHealth', 5, 12)
+      this.accumulatedPlayerAttacks++
     },
-    makePlayerSpecialAttack() {},
+    makePlayerSpecialAttack() {
+      if (this.isSpecialAttackAvailable) {
+        this.makeAttack('monsterHealth', 15, 20)
+        this.accumulatedPlayerAttacks = 0
+      }
+    },
     healPlayer() {},
     handleSurrender() {}
   }

@@ -31,7 +31,12 @@
       </section>
       <section id="controls">
         <button @click="makePlayerAttack">ATTACK</button>
-        <button @click="makePlayerSpecialAttack">SPECIAL ATTACK</button>
+        <button
+          @click="makePlayerSpecialAttack"
+          :disabled="!isSpecialAttackAvailable"
+        >
+          SPECIAL ATTACK
+        </button>
         <button @click="healPlayer">HEAL</button>
         <button @click="handleSurrender">SURRENDER</button>
       </section>
