@@ -37,7 +37,7 @@
         >
           SPECIAL ATTACK
         </button>
-        <button @click="healPlayer">HEAL</button>
+        <button @click="healPlayer" :disabled="!isHealAvailable">HEAL</button>
         <button @click="handleSurrender">SURRENDER</button>
       </section>
       <section id="log" class="container">

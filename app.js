@@ -17,28 +17,42 @@ Vue.createApp({
       const quantityToLoadSpecialAttack = 3
 
       return this.accumulatedPlayerAttacks >= quantityToLoadSpecialAttack
+    },
+    isHealAvailable() {
+      return this.accumulatedPlayerAttacks >= 2 && this.playerHealth < 100
     }
   },
   watch: {
     monsterHealth(newHealthValue, oldHealthValue) {
       const hasMonsterBeenAttacked = newHealthValue - oldHealthValue
 
-      if (hasMonsterBeenAttacked) {
+      if (newHealthValue > 0 && hasMonsterBeenAttacked) {
+        this.makeMonsterAttack()
+      }
+    },
+    playerHealth(newHealthValue, oldHealthValue) {
+      const hasPlayerBeenHealed = newHealthValue > oldHealthValue
+
+      if (hasPlayerBeenHealed) {
         this.makeMonsterAttack()
       }
     }
   },
   methods: {
+    getRandomValueBetweenInterval(initialInverval, finalInterval) {
+      return (
+        Math.floor(Math.random() * (finalInterval - initialInverval)) +
+        initialInverval
+      )
+    },
     makeMonsterAttack() {
       this.makeAttack('playerHealth', 8, 15)
     },
     makeAttack(enemyHealthKey, minimumAttackDamage, maximumAttackDamage) {
-      const randomAttackDamage =
-        Math.floor(
-          Math.random() * (maximumAttackDamage - minimumAttackDamage)
-        ) + minimumAttackDamage
-
-      console.log(randomAttackDamage)
+      const randomAttackDamage = this.getRandomValueBetweenInterval(
+        minimumAttackDamage,
+        maximumAttackDamage
+      )
 
       this[enemyHealthKey] -= randomAttackDamage
     },
@@ -52,7 +66,20 @@ Vue.createApp({
         this.accumulatedPlayerAttacks = 0
       }
     },
-    healPlayer() {},
+    healPlayer() {
+      if (this.isHealAvailable) {
+        const healValue = this.getRandomValueBetweenInterval(5, 20)
+
+        const healthAfterHeal = this.playerHealth + healValue
+
+        if (healthAfterHeal > 100) {
+          this.playerHealth = 100
+          return
+        }
+
+        this.playerHealth = healthAfterHeal
+      }
+    },
     handleSurrender() {}
   }
 }).mount('#game')
