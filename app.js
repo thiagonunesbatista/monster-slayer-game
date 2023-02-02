@@ -7,6 +7,17 @@ Vue.createApp({
     }
   },
   computed: {
+    finishedBattleMessage() {
+      if (this.playerHealth <= 0) {
+        return 'Monster Won'
+      }
+
+      if (this.monsterHealth <= 0) {
+        return 'Player Won'
+      }
+
+      return false
+    },
     healthBarStyles() {
       return {
         monster: `width: ${this.monsterHealth}%`,
@@ -39,6 +50,11 @@ Vue.createApp({
     }
   },
   methods: {
+    startNewBattle() {
+      this.playerHealth = 100
+      this.monsterHealth = 100
+      this.accumulatedPlayerAttacks = 0
+    },
     getRandomValueBetweenInterval(initialInverval, finalInterval) {
       return (
         Math.floor(Math.random() * (finalInterval - initialInverval)) +

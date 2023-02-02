@@ -29,7 +29,13 @@
           <div class="healthbar__value" :style="healthBarStyles.player"></div>
         </div>
       </section>
-      <section id="controls">
+
+      <section v-if="finishedBattleMessage" class="container">
+        <p>{{ finishedBattleMessage }}</p>
+        <button @click="startNewBattle">Start a new battle</button>
+      </section>
+
+      <section v-else id="controls">
         <button @click="makePlayerAttack">ATTACK</button>
         <button
           @click="makePlayerSpecialAttack"
